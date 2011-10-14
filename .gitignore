@@ -2,3 +2,8 @@ target
 
 .idea
 *.iml
+
+.target
+.scala_dependencies
+.project
+.classpath
