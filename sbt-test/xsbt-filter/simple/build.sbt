@@ -13,7 +13,7 @@ TaskKey[Unit]("check-compile") <<= (classDirectory in Compile) map { (cd) =>
     error("property not substituted")
   if (props.getProperty("anothername") != "${name}")
     error("property substituted")
-  if (IO.read(cd / "sample.txt") != "This ${name} shouldn't be substituted.")
+  if (IO.read(cd / "sample.txt") != "This ${name} shouldn't be substituted.\n")
     error("file filtered")
   ()
 }

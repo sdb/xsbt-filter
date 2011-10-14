@@ -1,3 +1,4 @@
 > copy-resources
 > check-compile
+> test:copy-resources
 > check-test
