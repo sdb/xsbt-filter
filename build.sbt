@@ -4,7 +4,7 @@ name := "xsbt-filter"
 
 organization := "org.gitorious.xsbt-plugins"
 
-version := "0.0.1-SNAPSHOT"
+version := "0.1-SNAPSHOT"
 
 seq(ScriptedPlugin.scriptedSettings: _*)
 
