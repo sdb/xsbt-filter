@@ -1,7 +1,7 @@
 import sbt._
 import Keys._
 import Defaults._
-import Project.{ Initialize, Setting }
+import Project.Setting
 import collection.JavaConversions._
 import java.io.File
 
@@ -58,16 +58,15 @@ object FilterPlugin extends Plugin {
   def unmanagedPropsTask =
     (streams, resourceFilters) map {
       (streams, filters) =>
-        (Seq.empty[(String, String)] /: filters) { (acc, rf) => acc ++ Props(rf) }
+        (Seq.empty[(String, String)] /: filters) { (acc, rf) => acc ++ Props(streams.log, rf) }
     }
 
   def filterTask =
     (streams, copyResources, filteredIncludes, filterExcludes, filterProps) map {
       (streams, resources, incl, excl, filterProps) =>
-        val log = streams.log
         val props = Map.empty[String, String] ++ filterProps
         val filtered = resources filter (r => incl.accept(r._1) && !excl.accept(r._1)) // TODO: see collectFiles
-        Filter(filtered map (_._2), props)
+        Filter(streams.log, filtered map (_._2), props)
         resources
     }
 
@@ -83,7 +82,7 @@ object FilterPlugin extends Plugin {
   object Props {
     import java.util.Properties
 
-    def apply(path: File) = {
+    def apply(log: Logger, path: File) = {
       val props = new Properties
       IO.load(props, path)
       props
@@ -92,7 +91,7 @@ object FilterPlugin extends Plugin {
 
   object Filter {
     import util.matching.Regex._
-    import java.io.{ File, FileReader, BufferedReader, PrintWriter }
+    import java.io.{ FileReader, BufferedReader, PrintWriter }
 
     val pattern = """((?:\\?)\$\{.+?\})""".r
     def replacer(props: Map[String, String]) = (m: Match) => {
@@ -101,19 +100,21 @@ object FilterPlugin extends Plugin {
         case s => props.get(s.substring(2, s.length -1))
       }
     }
-    def filter(line: String, props: Map[String, String]) = {
-      pattern.replaceSomeIn(line, replacer(props))
-    }
+    def filter(line: String, props: Map[String, String]) = pattern.replaceSomeIn(line, replacer(props))
 
-    def apply(files: Seq[File], props: Map[String, String]) = IO.withTemporaryDirectory { dir =>
-      files foreach { src =>
-        val dest = new File(dir, src.getName)
-        val out = new PrintWriter(dest)
-        val in = new BufferedReader(new FileReader(src))
-        IO.foreachLine(in) { line => IO.writeLines(out, Seq(filter(line, props))) }
-        in.close
-        out.close
-        IO.copyFile(dest, src, true)
+    def apply(log: Logger, files: Seq[File], props: Map[String, String]) {
+      log debug ("Filter properties: %s" format (props.mkString("{", ", ", "}")))
+      IO.withTemporaryDirectory { dir =>
+        files foreach { src =>
+          log debug ("Filtering %s" format src.absolutePath)
+          val dest = new File(dir, src.getName)
+          val out = new PrintWriter(dest)
+          val in = new BufferedReader(new FileReader(src))
+          IO.foreachLine(in) { line => IO.writeLines(out, Seq(filter(line, props))) }
+          in.close()
+          out.close()
+          IO.copyFile(dest, src, true)
+        }
       }
     }
   }
