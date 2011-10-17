@@ -1,3 +1,5 @@
+package sbtfilter
+
 import sbt._
 import Keys._
 import Defaults._
@@ -5,42 +7,43 @@ import Project.Setting
 import collection.JavaConversions._
 import java.io.File
 
-object FilterPlugin extends Plugin {
-  val filterDirectoryName = SettingKey[String]("filter-directory-name", "Default filter directory name.")
-  val filterDirectory = SettingKey[File]("filter-directory", "Default filter directory, used for resource filter files.")
-  val filterDirectories = SettingKey[Seq[File]]("filter-directories", "Filter directories, used for resource filter files.")
-  val filterIncludes = SettingKey[FileFilter]("filter-includes", "Filter for including resource filter files.")
-  val filterExcludes = SettingKey[FileFilter]("filter-excludes", "Filter for excluding resource filter files.")
-  val resourceFilters = TaskKey[Seq[File]]("resource-filters", "All resource filter files.")
-  val extraFilterProps = SettingKey[Seq[(String, String)]]("extra-filter-props", "Extra filter properties.")
-  val projectFilterProps = TaskKey[Seq[(String, String)]]("project-filter-props", "Project filter properties.")
-  val systemFilterProps = TaskKey[Seq[(String, String)]]("system-filter-props", "System filter properties.")
-  val managedFilterProps = TaskKey[Seq[(String, String)]]("managed-filter-props", "Managed filter properties.")
-  val unmanagedFilterProps = TaskKey[Seq[(String, String)]]("unmanaged-filter-props", "Filter properties defined in resource filter files.")
-  val filterProps = TaskKey[Seq[(String, String)]]("filter-props", "All filter properties.")
-  val filteredIncludes = SettingKey[FileFilter]("filtered-includes", "Filter for including resources in filtering.")
-  val filteredExcludes = SettingKey[FileFilter]("filtered-excludes", "Filter for excluding resources from filtering.")
+object Plugin extends sbt.Plugin {
+  import FilterKeys._
+
+  object FilterKeys {
+    val filterDirectoryName = SettingKey[String]("filter-directory-name", "Default filter directory name.")
+    val filterDirectory = SettingKey[File]("filter-directory", "Default filter directory, used for filters.")
+    val filters = TaskKey[Seq[File]]("filters", "All filters.")
+    val extraProps = SettingKey[Seq[(String, String)]]("filter-extra-props", "Extra filter properties.")
+    val projectProps = TaskKey[Seq[(String, String)]]("filter-project-props", "Project filter properties.")
+    val systemProps = TaskKey[Seq[(String, String)]]("filter-system-props", "System filter properties.")
+    val managedProps = TaskKey[Seq[(String, String)]]("filter-managed-props", "Managed filter properties.")
+    val unmanagedProps = TaskKey[Seq[(String, String)]]("filter-unmanaged-props", "Filter properties defined in filters.")
+    val props = TaskKey[Seq[(String, String)]]("filter-props", "All filter properties.")
+    val filterResources = TaskKey[Seq[(File, File)]]("filter-resources", "Filters all resources.")
+  }
 
   lazy val filterConfigPaths: Seq[Setting[_]] = Seq(
     filterDirectory <<= (sourceDirectory, filterDirectoryName) apply { (d, name) => d / name },
-    filterDirectories <<= Seq(filterDirectory).join,
-    resourceFilters <<= collectFiles(filterDirectories, filterIncludes in resourceFilters, filterExcludes in resourceFilters))
+    sourceDirectories in filters <<= Seq(filterDirectory).join,
+    filters <<= collectFiles(sourceDirectories in filters, includeFilter in filters, excludeFilter in filters))
   lazy val filterConfigTasks: Seq[Setting[_]] = Seq(
-    copyResources <<= filterTask,
-    managedFilterProps <<= (projectFilterProps, systemFilterProps) map (_ ++ _),
-    unmanagedFilterProps <<= unmanagedPropsTask,
-    filterProps <<= (extraFilterProps, managedFilterProps, unmanagedFilterProps) map (_ ++ _ ++ _))
+    filterResources <<= filterTask triggeredBy copyResources,
+    copyResources in filterResources <<= (copyResources).identity,
+    managedProps <<= (projectProps, systemProps) map (_ ++ _),
+    unmanagedProps <<= unmanagedPropsTask,
+    props <<= (extraProps, managedProps, unmanagedProps) map (_ ++ _ ++ _))
   lazy val filterConfigSettings: Seq[Setting[_]] = filterConfigTasks ++ filterConfigPaths
   
   lazy val baseFilterSettings = Seq(
     filterDirectoryName := "filters",
-    extraFilterProps := Nil,
-    projectFilterProps <<= projectPropsTask,
-    systemFilterProps <<= (state) map { (state) => SystemProps() },
-    filterIncludes := "*.properties" | "*.xml",
-    filterExcludes := HiddenFileFilter,
-    filteredIncludes := "*.properties" | "*.xml",
-    filteredExcludes := HiddenFileFilter || ImageFileFilter)
+    extraProps := Nil,
+    projectProps <<= projectPropsTask,
+    systemProps <<= (state) map { (state) => SystemProps() },
+    includeFilter in filters := "*.properties" | "*.xml",
+    excludeFilter in filters := HiddenFileFilter,
+    includeFilter in filterResources := "*.properties" | "*.xml",
+    excludeFilter in filterResources := HiddenFileFilter || ImageFileFilter)
   lazy val filterSettings = baseFilterSettings ++ inConfig(Compile)(filterConfigSettings) ++ inConfig(Test)(filterConfigSettings)
 
   def projectPropsTask =
@@ -56,16 +59,16 @@ object FilterPlugin extends Plugin {
     }
 
   def unmanagedPropsTask =
-    (streams, resourceFilters) map {
+    (streams, filters) map {
       (streams, filters) =>
         (Seq.empty[(String, String)] /: filters) { (acc, rf) => acc ++ Props(streams.log, rf) }
     }
 
   def filterTask =
-    (streams, copyResources, filteredIncludes, filterExcludes, filterProps) map {
+    (streams, copyResources in filterResources, includeFilter in filterResources, excludeFilter in filterResources, props) map {
       (streams, resources, incl, excl, filterProps) =>
         val props = Map.empty[String, String] ++ filterProps
-        val filtered = resources filter (r => incl.accept(r._1) && !excl.accept(r._1)) // TODO: see collectFiles
+        val filtered = resources filter (r => incl.accept(r._1) && !excl.accept(r._1))
         Filter(streams.log, filtered map (_._2), props)
         resources
     }
