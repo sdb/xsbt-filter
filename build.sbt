@@ -2,7 +2,7 @@ sbtPlugin := true
 
 name := "xsbt-filter"
 
-organization := "org.gitorious.xsbt-plugins"
+organization := "com.github.sdb"
 
 version := "0.1-SNAPSHOT"
 
