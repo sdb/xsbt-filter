@@ -1,1 +1,1 @@
-addSbtPlugin("org.gitorious.xsbt-plugins" % "xsbt-filter" % "0.1-SNAPSHOT")
+addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.1-SNAPSHOT")
