@@ -28,7 +28,7 @@ Add the default filter settings to your project in `build.sbt`:
 
     seq(filterSettings: _*)
 
-# Build
+## Build
 
 Build and install the plugin to use the latest SNAPSHOT version:
 
