@@ -1,10 +1,10 @@
-The xsbt-filter project provides the necessary functionality for filtering resources in an [sbt](https://github.com/harrah/xsbt) project. The plugin's functionality is similar to Maven's [resource filtering](http://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html) mechanism.
+The xsbt-filter project provides the necessary functionality for filtering resources in an [sbt](https://github.com/harrah/xsbt) project. The plugin's functionality is similar to Maven's [resource filtering](http://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html) mechanism and is useful when migrating Maven projects that depend heavily on resource filtering.
 
 ## Requirements
 
 * sbt 0.11.0 or later
 
-## Overview
+## Overview 
 
 This plugin scans your resources (e.g `src/main/resources`, `src/test/resources`) for variables (surrounded by `${` and `}`) and replaces them with values which can come from the system properties, your project properties and filter resources.
 
@@ -16,21 +16,25 @@ When `copy-resources` is executed, this will create a resource output `hello.txt
 
 Filter resources are one way to add extra properties which can be used to substitute variables. By default the plug-in looks for filter resources in a `filters` directory under the source directories for the `main` (`compile`) and `test` configurations (`src/main/filters` and `src/test/filters`).
 
-## Quickstart
-
-This plugin hasn't been published yet, so checkout the sources and install the plugin into your local Ivy repository:
-
-    git clone git://github.com/sdb/xsbt-filter.git
-    cd xsbt-filter
-    sbt publish-local
+## Setup
 
 Add the following to your plugin configuration (in `project/plugins/build.sbt`):
-
-    addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.1-SNAPSHOT")
+    
+    resolvers += "sdb@github" at "http://sdb.github.com/maven
+    
+    addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.1")
 
 Add the default filter settings to your project in `build.sbt`:
 
     seq(filterSettings: _*)
+
+# Build
+
+Build and install the plugin to use the latest SNAPSHOT version:
+
+    git clone git://github.com/sdb/xsbt-filter.git
+    cd xsbt-filter
+    sbt publish-local
 
 ## Default Configuration
 
