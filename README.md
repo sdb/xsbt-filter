@@ -20,7 +20,7 @@ Filter resources are one way to add extra properties which can be used to substi
 
 Add the following to your plugin configuration (in `project/plugins/build.sbt`):
     
-    resolvers += "sdb@github" at "http://sdb.github.com/maven
+    resolvers += "sdb@github" at "http://sdb.github.com/maven"
     
     addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.1")
 
