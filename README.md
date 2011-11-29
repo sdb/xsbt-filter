@@ -64,13 +64,13 @@ Use the `filter-directory-name` setting to configure the name of the directory c
 
 Use the `include-filter` setting to change the file filter that determines which filters to include:
 
-    includeFilter in filters := AllPassFilter -- HiddenFileFilter
+    includeFilter in (Compile, filters) ~= { f => f || ("*.props" | "*.conf") }
 
 ### Filtered resource paths
 
 Use the `include-filter` setting to change the file filter that determines which resources need to be filtered:
 
-    includeFilter in filterResources ~= { f => f || ("*.props" | "*.conf") }
+    includeFilter in (Compile, filterResources) ~= { f => f || ("*.props" | "*.conf") }
 
 ### Properties
 
@@ -81,12 +81,6 @@ Use the `filter-extra-props` setting to add extra properties to be used as repla
 Use the `filter-project-props` setting to change the name of the properties which are derived from project settings to avoid collisions with other properties:
 
     projectProps ~= { _ map (p => ("project." + p._1, p._2)) }
-
-### Misc
-
-Only include the `compile` configuration in resource filtering:
-
-    seq((baseFilterSettings ++ inConfig(Compile)(filterConfigSettings)): _*)
 
 ## License
 
