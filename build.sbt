@@ -4,8 +4,8 @@ name := "xsbt-filter"
 
 organization := "com.github.sdb"
 
-// seq(ScriptedPlugin.scriptedSettings: _*)
+seq(ScriptedPlugin.scriptedSettings: _*)
 
 scalaSource in Compile <<= baseDirectory { (base) => base / "src" }
 
-// sbtTestDirectory <<= baseDirectory { (base) => base / "sbt-test" }
+sbtTestDirectory <<= baseDirectory { (base) => base / "sbt-test" }
