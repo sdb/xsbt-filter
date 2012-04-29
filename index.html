@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>xsbt-filter by sdb</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>xsbt-filter</h1>
+        <p>sbt plugin for filtering resources</p>
+        <p class="view"><a href="https://github.com/sdb/xsbt-filter">View the Project on GitHub <small>sdb/xsbt-filter</small></a></p>
+        <ul>
+          <li><a href="https://github.com/sdb/xsbt-filter/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/sdb/xsbt-filter/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/sdb/xsbt-filter">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p>The xsbt-filter project provides the necessary functionality for filtering resources in an <a href="https://github.com/harrah/xsbt">sbt</a> project. The plugin's functionality is similar to Maven's <a href="http://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html">resource filtering</a> mechanism and is useful when migrating Maven projects that depend heavily on resource filtering.</p>
+
+<h2>Requirements</h2>
+
+<ul>
+<li>sbt 0.11.0 or later</li>
+</ul><h2>Overview</h2>
+
+<p>This plugin scans your resources (e.g <code>src/main/resources</code>, <code>src/test/resources</code>) for variables (surrounded by <code>${</code> and <code>}</code>) and replaces them with values which can come from the system properties, your project properties and filter resources.</p>
+
+<p>For example, if we have a resource <code>src/main/resources/hello.txt</code> containing:</p>
+
+<pre><code>Hello, ${name}
+</code></pre>
+
+<p>When <code>copy-resources</code> is executed, this will create a resource output <code>hello.txt</code> in the project's classes output directory. The variable (or property reference) <code>${name}</code> will be replaced with the name of your project.</p>
+
+<p>Filter resources are one way to add extra properties which can be used to substitute variables. By default the plug-in looks for filter resources in a <code>filters</code> directory under the source directories for the <code>main</code> (<code>compile</code>) and <code>test</code> configurations (<code>src/main/filters</code> and <code>src/test/filters</code>).</p>
+
+<h2>Setup</h2>
+
+<p>Add the following to your plugin configuration (in <code>project/plugins/build.sbt</code>):</p>
+
+<pre><code>resolvers += "sdb@github" at "http://sdb.github.com/maven"
+
+addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.1")
+</code></pre>
+
+<p>Add the default filter settings to your project in <code>build.sbt</code>:</p>
+
+<pre><code>seq(filterSettings: _*)
+</code></pre>
+
+<h2>Build</h2>
+
+<p>Build and install the plugin to use the latest SNAPSHOT version:</p>
+
+<pre><code>git clone git://github.com/sdb/xsbt-filter.git
+cd xsbt-filter
+sbt publish-local
+</code></pre>
+
+<h2>Default Configuration</h2>
+
+<p>The plugin comes with a set of default settings. This is what you get with the default configuration:</p>
+
+<ul>
+<li>only <code>.properties</code> and <code>.xml</code> resources are filtered</li>
+<li>filter resources (only <code>.properties</code> and <code>.xml</code>) should be placed under a directory <code>filters</code>
+</li>
+<li>the following values are available as replacement values:
+
+<ul>
+<li>name, version, scalaVersion and a couple of other build settings (the setting name is used as key)</li>
+<li>system properties</li>
+<li>the user-defined properties defined in filter resources</li>
+</ul>
+</li>
+<li>resources filtering is triggered when <code>copy-resources</code> is executed</li>
+</ul><h2>Settings</h2>
+
+<p>Take a look at the source code for <a href="https://github.com/sdb/xsbt-filter/blob/master/src/FilterPlugin.scala">FilterPlugin</a> for all settings.</p>
+
+<p>Add the following to your <code>build.sbt</code> if you want to change any of the settings provided by this plugin:</p>
+
+<pre><code>import FilterKeys._
+</code></pre>
+
+<h3>Filter resource paths</h3>
+
+<p>Use the <code>filter-directory-name</code> setting to configure the name of the directory containing the filters:</p>
+
+<pre><code>filterDirectoryName := "my-filters"
+</code></pre>
+
+<p>Use the <code>include-filter</code> setting to change the file filter that determines which filters to include:</p>
+
+<pre><code>includeFilter in (Compile, filters) ~= { f =&gt; f || ("*.props" | "*.conf") }
+</code></pre>
+
+<h3>Filtered resource paths</h3>
+
+<p>Use the <code>include-filter</code> setting to change the file filter that determines which resources need to be filtered:</p>
+
+<pre><code>includeFilter in (Compile, filterResources) ~= { f =&gt; f || ("*.props" | "*.conf") }
+</code></pre>
+
+<h3>Properties</h3>
+
+<p>Use the <code>filter-extra-props</code> setting to add extra properties to be used as replacement values:</p>
+
+<pre><code>extraProps += "author" -&gt; "Foo Bar"
+</code></pre>
+
+<p>Use the <code>filter-project-props</code> setting to change the name of the properties which are derived from project settings to avoid collisions with other properties:</p>
+
+<pre><code>projectProps ~= { _ map (p =&gt; ("project." + p._1, p._2)) }
+</code></pre>
+
+<h2>License</h2>
+
+<p>This project is licensed under the New BSD License.</p>
+
+<h2>Contributing</h2>
+
+<p>Fork the repository, push your changes to a new branch and send me a merge request.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/sdb">sdb</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-31137859-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
