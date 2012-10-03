@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>xsbt-filter by sdb</title>
-    
+
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -17,15 +17,20 @@
       <header>
         <h1>xsbt-filter</h1>
         <p>sbt plugin for filtering resources</p>
+
         <p class="view"><a href="https://github.com/sdb/xsbt-filter">View the Project on GitHub <small>sdb/xsbt-filter</small></a></p>
+
+
         <ul>
           <li><a href="https://github.com/sdb/xsbt-filter/zipball/master">Download <strong>ZIP File</strong></a></li>
           <li><a href="https://github.com/sdb/xsbt-filter/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/sdb/xsbt-filter">Fork On <strong>GitHub</strong></a></li>
+          <li><a href="https://github.com/sdb/xsbt-filter">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
       <section>
-        <p>The xsbt-filter project provides the necessary functionality for filtering resources in an <a href="https://github.com/harrah/xsbt">sbt</a> project. The plugin's functionality is similar to Maven's <a href="http://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html">resource filtering</a> mechanism and is useful when migrating Maven projects that depend heavily on resource filtering.</p>
+        <p><a href="http://travis-ci.org/sdb/xsbt-filter"><img src="https://secure.travis-ci.org/sdb/xsbt-filter.png" alt="Build Status"></a></p>
+
+<p>The xsbt-filter project provides the necessary functionality for filtering resources in an <a href="https://github.com/harrah/xsbt">sbt</a> project. The plugin's functionality is similar to Maven's <a href="http://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html">resource filtering</a> mechanism and is useful when migrating Maven projects that depend heavily on resource filtering.</p>
 
 <h2>Requirements</h2>
 
@@ -50,7 +55,7 @@
 
 <pre><code>resolvers += "sdb@github" at "http://sdb.github.com/maven"
 
-addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.1")
+addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.2")
 </code></pre>
 
 <p>Add the default filter settings to your project in <code>build.sbt</code>:</p>
