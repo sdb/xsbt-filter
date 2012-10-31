@@ -23,6 +23,7 @@ object Plugin extends sbt.Plugin {
     val extraProps = SettingKey[Seq[(String, String)]]("filter-extra-props", "Extra filter properties.")
     val projectProps = TaskKey[Seq[(String, String)]]("filter-project-props", "Project filter properties.")
     val systemProps = TaskKey[Seq[(String, String)]]("filter-system-props", "System filter properties.")
+    val envProps = TaskKey[Seq[(String, String)]]("filter-env-props", "Environment filter properties.")
     val managedProps = TaskKey[Seq[(String, String)]]("filter-managed-props", "Managed filter properties.")
     val unmanagedProps = TaskKey[Seq[(String, String)]]("filter-unmanaged-props", "Filter properties defined in filters.")
     val props = TaskKey[Seq[(String, String)]]("filter-props", "All filter properties.")
@@ -59,8 +60,8 @@ object Plugin extends sbt.Plugin {
     excludeFilter in filterResources := HiddenFileFilter || ImageFileFilter)
   lazy val filterConfigTasks: Seq[Setting[_]] = Seq(
     filterResourcesTask,
-    copyResources in filterResources <<= (copyResources).identity,
-    managedProps <<= (projectProps, systemProps) map (_ ++ _),
+    copyResources in filterResources <<= copyResources,
+    managedProps <<= (projectProps, systemProps, envProps) map (_ ++ _ ++ _),
     unmanagedPropsTask,
     props <<= (extraProps, managedProps, unmanagedProps) map (_ ++ _ ++ _))
   lazy val filterConfigSettings: Seq[Setting[_]] = filterConfigTasks ++ filterConfigPaths
@@ -69,6 +70,7 @@ object Plugin extends sbt.Plugin {
     filterDirectoryName := "filters",
     extraProps := Nil,
     projectPropsTask,
+    envProps := System.getenv.toSeq,
     systemProps := System.getProperties.stringPropertyNames.toSeq map (k => k -> System.getProperty(k)))
   lazy val filterSettings = baseFilterSettings ++ inConfig(Compile)(filterConfigSettings) ++ inConfig(Test)(filterConfigSettings)
 
