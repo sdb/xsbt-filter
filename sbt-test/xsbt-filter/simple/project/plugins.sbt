@@ -1,1 +1,1 @@
-addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.3-SNAPSHOT")
+addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.3")

@@ -1,3 +1,5 @@
+version := "0.3"
+
 sbtPlugin := true
 
 name := "xsbt-filter"
