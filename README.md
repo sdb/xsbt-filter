@@ -24,7 +24,7 @@ Add the following to your plugin configuration (in `project/plugins/build.sbt`):
     
     resolvers += "sdb@github" at "http://sdb.github.com/maven"
     
-    addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.2")
+    addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.3")
 
 Add the default filter settings to your project in `build.sbt`:
 
@@ -47,6 +47,7 @@ The plugin comes with a set of default settings. This is what you get with the d
 * the following values are available as replacement values:
   * name, version, scalaVersion and a couple of other build settings (the setting name is used as key)
   * system properties
+  * environment variables
   * the user-defined properties defined in filter resources
 * resources filtering is triggered when `copy-resources` is executed
 
