@@ -55,7 +55,7 @@
 
 <pre><code>resolvers += "sdb@github" at "http://sdb.github.com/maven"
 
-addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.2")
+addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.3")
 </code></pre>
 
 <p>Add the default filter settings to your project in <code>build.sbt</code>:</p>
@@ -85,6 +85,7 @@ sbt publish-local
 <ul>
 <li>name, version, scalaVersion and a couple of other build settings (the setting name is used as key)</li>
 <li>system properties</li>
+<li>environment variables</li>
 <li>the user-defined properties defined in filter resources</li>
 </ul>
 </li>
