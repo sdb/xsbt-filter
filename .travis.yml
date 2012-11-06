@@ -4,4 +4,4 @@ scala:
 branches:
   only:
     - master
-script: "sbt '++$TRAVIS_SCALA_VERSION' 'set skip in PgpKeys.pgpSigner := true' scripted"
+script: "sbt ++$TRAVIS_SCALA_VERSION 'set skip in PgpKeys.pgpSigner := true' scripted"
