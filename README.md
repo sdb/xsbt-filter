@@ -22,9 +22,13 @@ Filter resources are one way to add extra properties which can be used to substi
 
 Add the following to your plugin configuration (in `project/plugins/build.sbt`):
     
-    resolvers += "sdb@github" at "http://sdb.github.com/maven"
-    
     addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.3")
+
+If you want to use the latest snapshot version then you need to add the Sonatype OSS Maven repository:
+
+    resolvers += "Sonatype OSS snapshots repository" at "https://oss.sonatype.org/content/repositories/snapshots/"
+    
+    addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.4-SNAPSHOT")
 
 Add the default filter settings to your project in `build.sbt`:
 
