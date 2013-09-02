@@ -3,7 +3,6 @@ package sbtfilter
 import sbt._
 import Keys._
 import Defaults._
-import Project.Setting
 import collection.JavaConversions._
 import java.io.File
 import java.util.Properties
@@ -15,19 +14,20 @@ import java.util.Properties
 */
 object Plugin extends sbt.Plugin {
   import FilterKeys._
+  import FileFilter.globFilter
 
   object FilterKeys {
-    val filterDirectoryName = SettingKey[String]("filter-directory-name", "Default filter directory name.")
-    val filterDirectory = SettingKey[File]("filter-directory", "Default filter directory, used for filters.")
-    val filters = TaskKey[Seq[File]]("filters", "All filters.")
-    val extraProps = SettingKey[Seq[(String, String)]]("filter-extra-props", "Extra filter properties.")
-    val projectProps = TaskKey[Seq[(String, String)]]("filter-project-props", "Project filter properties.")
-    val systemProps = TaskKey[Seq[(String, String)]]("filter-system-props", "System filter properties.")
-    val envProps = TaskKey[Seq[(String, String)]]("filter-env-props", "Environment filter properties.")
-    val managedProps = TaskKey[Seq[(String, String)]]("filter-managed-props", "Managed filter properties.")
-    val unmanagedProps = TaskKey[Seq[(String, String)]]("filter-unmanaged-props", "Filter properties defined in filters.")
-    val props = TaskKey[Seq[(String, String)]]("filter-props", "All filter properties.")
-    val filterResources = TaskKey[Seq[(File, File)]]("filter-resources", "Filters all resources.")
+    val filterDirectoryName =  Def.settingKey[String]("Default filter directory name.")
+    val filterDirectory = Def.settingKey[File]("Default filter directory, used for filters.")
+    val filters = Def.taskKey[Seq[File]]("All filters.")
+    val extraProps = Def.settingKey[Seq[(String, String)]]("Extra filter properties.")
+    val projectProps = Def.taskKey[Seq[(String, String)]]("Project filter properties.")
+    val systemProps = Def.taskKey[Seq[(String, String)]]("System filter properties.")
+    val envProps = Def.taskKey[Seq[(String, String)]]("Environment filter properties.")
+    val managedProps = Def.taskKey[Seq[(String, String)]]("Managed filter properties.")
+    val unmanagedProps = Def.taskKey[Seq[(String, String)]]("Filter properties defined in filters.")
+    val props = Def.taskKey[Seq[(String, String)]]("All filter properties.")
+    val filterResources = Def.taskKey[Seq[(File, File)]]("Filters all resources.")
   }
 
   lazy val filterResourcesTask = filterResources <<= filter(copyResources, filterResources) triggeredBy copyResources
@@ -65,7 +65,7 @@ object Plugin extends sbt.Plugin {
     unmanagedPropsTask,
     props <<= (extraProps, managedProps, unmanagedProps) map (_ ++ _ ++ _))
   lazy val filterConfigSettings: Seq[Setting[_]] = filterConfigTasks ++ filterConfigPaths
-  
+
   lazy val baseFilterSettings = Seq(
     filterDirectoryName := "filters",
     extraProps := Nil,
