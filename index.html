@@ -32,11 +32,13 @@
 
 <p>The xsbt-filter project provides the necessary functionality for filtering resources in an <a href="https://github.com/harrah/xsbt">sbt</a> project. The plugin's functionality is similar to Maven's <a href="http://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html">resource filtering</a> mechanism and is useful when migrating Maven projects that depend heavily on resource filtering.</p>
 
-<h2>Requirements</h2>
+<h2>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
 
 <ul>
 <li>sbt 0.11.0 or later</li>
-</ul><h2>Overview</h2>
+</ul><h2>
+<a name="overview" class="anchor" href="#overview"><span class="octicon octicon-link"></span></a>Overview</h2>
 
 <p>This plugin scans your resources (e.g <code>src/main/resources</code>, <code>src/test/resources</code>) for variables (surrounded by <code>${</code> and <code>}</code>) and replaces them with values which can come from the system properties, your project properties and filter resources.</p>
 
@@ -49,13 +51,19 @@
 
 <p>Filter resources are one way to add extra properties which can be used to substitute variables. By default the plug-in looks for filter resources in a <code>filters</code> directory under the source directories for the <code>main</code> (<code>compile</code>) and <code>test</code> configurations (<code>src/main/filters</code> and <code>src/test/filters</code>).</p>
 
-<h2>Setup</h2>
+<h2>
+<a name="setup" class="anchor" href="#setup"><span class="octicon octicon-link"></span></a>Setup</h2>
 
 <p>Add the following to your plugin configuration (in <code>project/plugins/build.sbt</code>):</p>
 
-<pre><code>resolvers += "sdb@github" at "http://sdb.github.com/maven"
+<pre><code>addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.4")
+</code></pre>
 
-addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.3")
+<p>If you want to use the latest snapshot version then you need to add the Sonatype OSS Maven repository:</p>
+
+<pre><code>resolvers += "Sonatype OSS snapshots repository" at "https://oss.sonatype.org/content/repositories/snapshots/"
+
+addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.5-SNAPSHOT")
 </code></pre>
 
 <p>Add the default filter settings to your project in <code>build.sbt</code>:</p>
@@ -63,7 +71,8 @@ addSbtPlugin("com.github.sdb" % "xsbt-filter" % "0.3")
 <pre><code>seq(filterSettings: _*)
 </code></pre>
 
-<h2>Build</h2>
+<h2>
+<a name="build" class="anchor" href="#build"><span class="octicon octicon-link"></span></a>Build</h2>
 
 <p>Build and install the plugin to use the latest SNAPSHOT version:</p>
 
@@ -72,7 +81,8 @@ cd xsbt-filter
 sbt publish-local
 </code></pre>
 
-<h2>Default Configuration</h2>
+<h2>
+<a name="default-configuration" class="anchor" href="#default-configuration"><span class="octicon octicon-link"></span></a>Default Configuration</h2>
 
 <p>The plugin comes with a set of default settings. This is what you get with the default configuration:</p>
 
@@ -90,7 +100,8 @@ sbt publish-local
 </ul>
 </li>
 <li>resources filtering is triggered when <code>copy-resources</code> is executed</li>
-</ul><h2>Settings</h2>
+</ul><h2>
+<a name="settings" class="anchor" href="#settings"><span class="octicon octicon-link"></span></a>Settings</h2>
 
 <p>Take a look at the source code for <a href="https://github.com/sdb/xsbt-filter/blob/master/src/FilterPlugin.scala">FilterPlugin</a> for all settings.</p>
 
@@ -99,7 +110,8 @@ sbt publish-local
 <pre><code>import FilterKeys._
 </code></pre>
 
-<h3>Filter resource paths</h3>
+<h3>
+<a name="filter-resource-paths" class="anchor" href="#filter-resource-paths"><span class="octicon octicon-link"></span></a>Filter resource paths</h3>
 
 <p>Use the <code>filter-directory-name</code> setting to configure the name of the directory containing the filters:</p>
 
@@ -111,14 +123,16 @@ sbt publish-local
 <pre><code>includeFilter in (Compile, filters) ~= { f =&gt; f || ("*.props" | "*.conf") }
 </code></pre>
 
-<h3>Filtered resource paths</h3>
+<h3>
+<a name="filtered-resource-paths" class="anchor" href="#filtered-resource-paths"><span class="octicon octicon-link"></span></a>Filtered resource paths</h3>
 
 <p>Use the <code>include-filter</code> setting to change the file filter that determines which resources need to be filtered:</p>
 
 <pre><code>includeFilter in (Compile, filterResources) ~= { f =&gt; f || ("*.props" | "*.conf") }
 </code></pre>
 
-<h3>Properties</h3>
+<h3>
+<a name="properties" class="anchor" href="#properties"><span class="octicon octicon-link"></span></a>Properties</h3>
 
 <p>Use the <code>filter-extra-props</code> setting to add extra properties to be used as replacement values:</p>
 
@@ -130,13 +144,32 @@ sbt publish-local
 <pre><code>projectProps ~= { _ map (p =&gt; ("project." + p._1, p._2)) }
 </code></pre>
 
-<h2>License</h2>
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>This project is licensed under the New BSD License.</p>
 
-<h2>Contributing</h2>
+<h2>
+<a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
 
 <p>Fork the repository, push your changes to a new branch and send me a merge request.</p>
+
+<h2>
+<a name="build-test--publish" class="anchor" href="#build-test--publish"><span class="octicon octicon-link"></span></a>Build, test &amp; publish</h2>
+
+<h3>
+<a name="tests" class="anchor" href="#tests"><span class="octicon octicon-link"></span></a>Tests</h3>
+
+<pre><code>sbt scripted
+</code></pre>
+
+<h3>
+<a name="publish" class="anchor" href="#publish"><span class="octicon octicon-link"></span></a>Publish</h3>
+
+<p>See <a href="http://www.scala-sbt.org/release/docs/Community/Using-Sonatype.html">Deploying to Sonatype</a> and <a href="https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8.ReleaseIt">Sonatype OSS Maven Repository Usage Guide</a> for more information.</p>
+
+<pre><code>sbt publish
+</code></pre>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/sdb">sdb</a></p>
