@@ -2,10 +2,10 @@ package sbtfilter
 
 import sbt._
 import Keys._
-import Defaults._
-import collection.JavaConversions._
+import Defaults.collectFiles
 import java.io.File
 import java.util.Properties
+import scala.collection.JavaConversions._
 
 /* TODO
 - configurable variable delimiters
@@ -13,17 +13,17 @@ import java.util.Properties
 - watchSources
 */
 trait FilterKeys {
-  val filterDirectoryName =  Def.settingKey[String]("Default filter directory name.")
-  val filterDirectory = Def.settingKey[File]("Default filter directory, used for filters.")
-  val filters = Def.taskKey[Seq[File]]("All filters.")
-  val filterExtraProps = Def.settingKey[Seq[(String, String)]]("Extra filter properties.")
-  val filterProjectProps = Def.taskKey[Seq[(String, String)]]("Project filter properties.")
-  val filterSystemProps = Def.taskKey[Seq[(String, String)]]("System filter properties.")
-  val filterEnvProps = Def.taskKey[Seq[(String, String)]]("Environment filter properties.")
-  val filterManagedProps = Def.taskKey[Seq[(String, String)]]("Managed filter properties.")
-  val filterUnmanagedProps = Def.taskKey[Seq[(String, String)]]("Filter properties defined in filters.")
-  val filterProps = Def.taskKey[Seq[(String, String)]]("All filter properties.")
-  val filterResources = Def.taskKey[Seq[(File, File)]]("Filters all resources.")
+  val filterDirectoryName  = settingKey[String]("Default filter directory name.")
+  val filterDirectory      = settingKey[File]("Default filter directory, used for filters.")
+  val filters              = taskKey[Seq[File]]("All filters.")
+  val filterExtraProps     = settingKey[Seq[(String, String)]]("Extra filter properties.")
+  val filterProjectProps   = taskKey[Seq[(String, String)]]("Project filter properties.")
+  val filterSystemProps    = taskKey[Seq[(String, String)]]("System filter properties.")
+  val filterEnvProps       = taskKey[Seq[(String, String)]]("Environment filter properties.")
+  val filterManagedProps   = taskKey[Seq[(String, String)]]("Managed filter properties.")
+  val filterUnmanagedProps = taskKey[Seq[(String, String)]]("Filter properties defined in filters.")
+  val filterProps          = taskKey[Seq[(String, String)]]("All filter properties.")
+  val filterResources      = taskKey[Seq[(File, File)]]("Filters all resources.")
 }
 
 object FilterPlugin extends AutoPlugin {
