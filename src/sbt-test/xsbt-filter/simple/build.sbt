@@ -1,8 +1,10 @@
 version := "0.1"
 
 name := "simple"
- 
-seq(filterSettings: _*)
+
+// Since SBT 0.13.6, `enablePlugins(FilterPlugin)` can be written directly
+val root = (project in file(".")).
+    enablePlugins(FilterPlugin)
 
 TaskKey[Unit]("check-compile") <<= (classDirectory in Compile) map { (cd) =>
   val props = new java.util.Properties

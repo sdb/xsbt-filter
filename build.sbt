@@ -6,13 +6,7 @@ name := "xsbt-filter"
 
 organization := "com.github.sdb"
 
-seq(ScriptedPlugin.scriptedSettings: _*)
-
-scalaSource in Compile <<= baseDirectory { (base) => base / "src" }
-
-sbtTestDirectory <<= baseDirectory { (base) => base / "sbt-test" }
-
-crossScalaVersions := Seq("2.9.1", "2.9.2")
+scalaVersion := "2.10.5"
 
 scalacOptions ++= Seq("-deprecation", "-unchecked")
 
@@ -20,11 +14,11 @@ licenses := Seq("New BSD License" -> url("http://opensource.org/licenses/BSD-3-C
 
 homepage := Some(url("http://sdb.github.com/xsbt-filter/"))
 
-publishTo <<= version { v: String =>
+publishTo := {
   val nexus = "https://oss.sonatype.org/"
-  if (v.trim.endsWith("SNAPSHOT")) 
+  if (version.value.trim.endsWith("SNAPSHOT"))
     Some("snapshots" at nexus + "content/repositories/snapshots")
-  else                             
+  else
     Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 
