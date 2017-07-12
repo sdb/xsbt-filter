@@ -1,3 +1,5 @@
+The development of this library has been discontinued.
+
 [![Build Status](https://secure.travis-ci.org/sdb/xsbt-filter.png)](http://travis-ci.org/sdb/xsbt-filter)
 
 The xsbt-filter project provides the necessary functionality for filtering resources in an [sbt](https://github.com/harrah/xsbt) project. The plugin's functionality is similar to Maven's [resource filtering](http://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html) mechanism and is useful when migrating Maven projects that depend heavily on resource filtering.
