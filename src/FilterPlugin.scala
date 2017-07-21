@@ -72,7 +72,7 @@ object Plugin extends sbt.Plugin {
     projectPropsTask,
     envProps := System.getenv.toSeq,
     systemProps := System.getProperties.stringPropertyNames.toSeq map (k => k -> System.getProperty(k)))
-  lazy val filterSettings = baseFilterSettings ++ inConfig(Compile)(filterConfigSettings) ++ inConfig(Test)(filterConfigSettings)
+  lazy val filterSettings = baseFilterSettings ++ inConfig(Compile)(filterConfigSettings) ++ inConfig(Test)(filterConfigSettings) ++ inConfig(IntegrationTest)(filterConfigSettings)
 
   object ImageFileFilter extends FileFilter {
     val formats = Seq("jpg", "jpeg", "png", "gif", "bmp")
