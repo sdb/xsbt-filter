@@ -1,8 +1,13 @@
+import sys.error
+
 version := "0.1"
 
 name := "simple"
- 
-seq(filterSettings: _*)
+
+// Since SBT 0.13.6, `enablePlugins(FilterPlugin)` can be written directly
+val root = (project in file(".")).
+    enablePlugins(FilterPlugin).
+    settings(filterExtraProps += "app.homepage" -> "http://localhost")
 
 TaskKey[Unit]("check-compile") <<= (classDirectory in Compile) map { (cd) =>
   val props = new java.util.Properties
@@ -11,9 +16,9 @@ TaskKey[Unit]("check-compile") <<= (classDirectory in Compile) map { (cd) =>
     error("property not substituted")
   if (props.getProperty("homepage") != "http://localhost")
     error("property not substituted")
-  if (props.getProperty("anothername") != "${name}")
+  if (props.getProperty("anothername") != "${project.name}")
     error("property substituted")
-  if (IO.read(cd / "sample.txt") != "This ${name} shouldn't be substituted.\n")
+  if (IO.read(cd / "sample.txt") != "This ${project.name} shouldn't be substituted.\n")
     error("file filtered")
   ()
 }
